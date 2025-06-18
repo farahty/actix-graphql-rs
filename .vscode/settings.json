@@ -1,0 +1,10 @@
+{
+    "cSpell.words": [
+        "actix",
+        "bson",
+        "rustls",
+        "serde"
+    ],
+    "editor.inlayHints.enabled": "offUnlessPressed",
+    "editor.codeLens": false
+}
