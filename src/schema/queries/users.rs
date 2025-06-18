@@ -1,9 +1,7 @@
-use crate::db::{
-    repo::MongoRepository,
-    users::{UserGQL, UserRepository},
-};
+use crate::db::repo::MongoRepository;
+use crate::models::users::{UserGQL, UserRepository};
 use async_graphql::{Context, Object, Result};
-use bson::oid::ObjectId;
+use mongodb::bson::oid::ObjectId;
 use std::sync::Arc;
 
 #[derive(Default, Clone)]

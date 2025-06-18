@@ -1,20 +1,25 @@
 mod config;
+#[macro_use]
 pub mod db;
 mod handlers;
+pub mod models;
 mod schema;
 
-use actix_cors::Cors;
-use actix_web::{middleware::Logger, web, App, HttpServer};
-use mongodb::options::ClientOptions;
-use mongodb::Client as MongoClient;
-use redis::aio::ConnectionManager;
-use redis::Client as RedisClient;
-use std::sync::Arc;
-
+use axum::{
+    Extension, Router,
+    routing::{get, post},
+};
 use config::AppConfig;
+use mongodb::Client as MongoClient;
+use mongodb::options::ClientOptions;
+use redis::Client as RedisClient;
+use redis::aio::ConnectionManager;
+use std::sync::Arc;
+use tracing_subscriber;
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt::init();
     let config = AppConfig::from_env();
 
     // Connect to Redis
@@ -29,24 +34,19 @@ async fn main() -> std::io::Result<()> {
     let mut client_options = ClientOptions::parse(&config.mongo_uri)
         .await
         .expect("Failed to parse MongoDB URI");
-    client_options.app_name = Some("ActixPlayground".to_string());
-
+    client_options.app_name = Some("AxumPlayground".to_string());
     let mongo_client =
         MongoClient::with_options(client_options).expect("Failed to initialize MongoDB client");
-
     let db = mongo_client.database(&config.mongo_db);
 
     let schema = schema::build_schema(redis, &db);
 
-    HttpServer::new(move || {
-        App::new()
-            .wrap(Logger::default())
-            .wrap(Cors::permissive())
-            .app_data(web::Data::new(schema.clone()))
-            .service(handlers::endpoint)
-            .service(handlers::ui)
-    })
-    .bind("localhost:8080")?
-    .run()
-    .await
+    let app = Router::new()
+        .route("/graphql", post(handlers::endpoint))
+        .route("/", get(handlers::ui))
+        .layer(Extension(schema));
+
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
+    println!("Listening on {}", listener.local_addr().unwrap());
+    axum::serve(listener, app).await.unwrap();
 }

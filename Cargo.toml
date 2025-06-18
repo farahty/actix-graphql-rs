@@ -1,19 +1,20 @@
 [package]
 name = "actix-playground"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-actix-web = "4"
-actix-cors = "0.6"
-async-graphql = "6"
-async-graphql-actix-web = "6"
-env_logger = "0.11"
+axum = "0.8"
+tokio = { version = "1", features = ["full"] }
+tracing-subscriber = "0.3"
+serde = { version = "1.0", features = ["derive"] }
 log = "0.4"
-redis = { version = "0.32.0", features = ["connection-manager", "tokio-comp"] }
-mongodb = { version = "3.2.3", features = ["rustls-tls"] }
-futures = "0.3.31"
-serde = { version = "1.0.219", features = ["derive"] }
-bson = "2.15.0"
-async-trait = "0.1"
+env_logger = "0.11"
+async-graphql = "7"
+async-graphql-axum = "7"
+mongodb = { version = "3.2", features = ["rustls-tls"] }
+redis = { version = "0.32", features = ["connection-manager", "tokio-comp"] }
 dotenvy = "0.15"
+bson = "2"
+futures = "0.3"
+async-trait = "0.1"

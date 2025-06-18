@@ -1,7 +1,5 @@
-use crate::db::{
-    repo::MongoRepository,
-    users::{NewUserInput, UserGQL, UserRepository},
-};
+use crate::db::repo::MongoRepository;
+use crate::models::users::{NewUserInput, UserGQL, UserRepository};
 use async_graphql::{Context, Object};
 use std::sync::Arc;
 

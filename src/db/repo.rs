@@ -1,11 +1,11 @@
+use async_graphql::futures_util::StreamExt;
 use async_trait::async_trait;
-use futures::stream::StreamExt;
 use mongodb::{
-    bson::{doc, from_document, oid::ObjectId, to_document, Document},
-    error::{Error, Result},
     Collection,
+    bson::{Document, doc, from_document, oid::ObjectId, to_document},
+    error::{Error, Result},
 };
-use serde::{de::DeserializeOwned, Serialize};
+use serde::{Serialize, de::DeserializeOwned};
 
 #[async_trait]
 pub trait MongoRepository<T, I>
@@ -20,6 +20,9 @@ where
         let entity = self.to_entity(input);
         let mut doc = to_document(&entity)?;
         doc.remove("_id");
+        let now = mongodb::bson::DateTime::now();
+        doc.insert("created_at", now);
+        doc.insert("updated_at", now);
 
         let result = self.collection().insert_one(doc.clone()).await?;
         let inserted_id = result
@@ -60,6 +63,7 @@ where
     async fn update(&self, id: ObjectId, update: &T) -> Result<T> {
         let mut update_doc = to_document(update)?;
         update_doc.remove("_id"); // never update the ID
+        update_doc.insert("updated_at", mongodb::bson::DateTime::now());
 
         self.collection()
             .update_one(doc! { "_id": id }, doc! { "$set": update_doc })

@@ -2,10 +2,8 @@ use std::sync::Arc;
 
 use async_graphql::{Context, Error, Object, Result};
 
-use crate::db::{
-    repo::MongoRepository,
-    todos::{NewTodoInput, TodoGQL, TodoRepository},
-};
+use crate::db::repo::MongoRepository;
+use crate::models::todos::{NewTodoInput, TodoGQL, TodoRepository};
 
 #[derive(Default)]
 pub struct TodosMutations {}

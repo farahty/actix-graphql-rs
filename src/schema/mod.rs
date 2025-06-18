@@ -2,10 +2,9 @@ mod mutations;
 mod queries;
 mod subscriptions;
 
-use crate::db::categories::CategoryRepository;
-
-use crate::db::todos::TodoRepository;
-use crate::db::users::UserRepository;
+use crate::models::categories::CategoryRepository;
+use crate::models::todos::TodoRepository;
+use crate::models::users::UserRepository;
 use mongodb::Database;
 use redis::aio::ConnectionManager;
 use std::sync::Arc;
