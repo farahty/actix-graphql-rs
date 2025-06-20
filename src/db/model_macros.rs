@@ -27,10 +27,10 @@ macro_rules! gql_model {
         impl From<$db> for $gql {
             fn from(value: $db) -> Self {
                 $gql {
-                    id: value.id.map(|oid| oid.to_hex()),
+                    id: value.id.as_ref().map(|oid| oid.to_hex()),
                     $( $field: ($extract)(&value), )*
-                    created_at: value.created_at.map(|dt| dt.to_string()),
-                    updated_at: value.updated_at.map(|dt| dt.to_string()),
+                    created_at: value.created_at.as_ref().map(|dt| dt.to_string()),
+                    updated_at: value.updated_at.as_ref().map(|dt| dt.to_string()),
                 }
             }
         }

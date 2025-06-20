@@ -1,9 +1,10 @@
+use crate::error::Result;
 use async_graphql::futures_util::StreamExt;
 use async_trait::async_trait;
 use mongodb::{
     Collection,
     bson::{Document, doc, from_document, oid::ObjectId, to_document},
-    error::{Error, Result},
+    error::Error,
 };
 use serde::{Serialize, de::DeserializeOwned};
 
@@ -56,11 +57,13 @@ where
         }
     }
 
-    async fn find_by_id(&self, id: ObjectId) -> Result<Option<T>> {
+    async fn find_by_id(&self, id: &str) -> Result<Option<T>> {
+        let id = ObjectId::parse_str(id).map_err(|_| Error::custom("Invalid ObjectId format"))?;
         self.find_one(doc! { "_id": id }).await
     }
 
-    async fn update(&self, id: ObjectId, update: &T) -> Result<T> {
+    async fn update(&self, id: &str, update: &T) -> Result<T> {
+        let id = ObjectId::parse_str(id).map_err(|_| Error::custom("Invalid ObjectId format"))?;
         let mut update_doc = to_document(update)?;
         update_doc.remove("_id"); // never update the ID
         update_doc.insert("updated_at", mongodb::bson::DateTime::now());
@@ -78,7 +81,8 @@ where
         Ok(from_document(updated_doc)?)
     }
 
-    async fn delete(&self, id: ObjectId) -> Result<bool> {
+    async fn delete(&self, id: &str) -> Result<bool> {
+        let id = ObjectId::parse_str(id).map_err(|_| Error::custom("Invalid ObjectId format"))?;
         let result = self.collection().delete_one(doc! { "_id": id }).await?;
 
         Ok(result.deleted_count > 0)

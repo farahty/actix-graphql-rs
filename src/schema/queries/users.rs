@@ -1,7 +1,8 @@
 use crate::db::repo::MongoRepository;
+use crate::error::Result;
 use crate::models::users::{UserGQL, UserRepository};
-use async_graphql::{Context, Object, Result};
-use mongodb::bson::oid::ObjectId;
+use async_graphql::{Context, Object};
+
 use std::sync::Arc;
 
 #[derive(Default, Clone)]
@@ -17,9 +18,8 @@ impl UsersQueries {
 
     pub async fn user(&self, ctx: &Context<'_>, id: String) -> Result<Option<UserGQL>> {
         let repo = ctx.data::<Arc<UserRepository>>()?;
-        let oid = ObjectId::parse_str(&id)?;
 
-        let user = repo.find_by_id(oid).await?;
+        let user = repo.find_by_id(&id).await?;
         Ok(user.map(UserGQL::from))
     }
 }

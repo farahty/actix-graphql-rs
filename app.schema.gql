@@ -1,0 +1,86 @@
+type CategoryGQL {
+	id: String
+	name: String!
+	description: String
+	createdAt: String
+	updatedAt: String
+}
+
+type Mutation {
+	createUser(input: NewUserInput!): UserGQL
+	createCategory(input: NewCategoryInput!): CategoryGQL
+	createTodo(input: NewTodoInput!): TodoGQL!
+}
+
+input NewCategoryInput {
+	name: String!
+	description: String
+}
+
+input NewTodoInput {
+	text: String!
+	completed: Boolean
+	description: String
+}
+
+input NewUserInput {
+	name: String
+	email: String
+	password: String!
+	mobile: String
+}
+
+type Query {
+	users: [UserGQL!]!
+	user(id: String!): UserGQL
+	categories: [CategoryGQL!]!
+	todos: [TodoGQL!]!
+}
+
+enum Role {
+	USER
+	ADMIN
+}
+
+type TodoGQL {
+	id: String
+	text: String!
+	completed: Boolean!
+	description: String
+	createdAt: String
+	updatedAt: String
+}
+
+type UserGQL {
+	id: String
+	name: String
+	email: String
+	mobile: String
+	role: Role!
+	verified: Boolean!
+	status: UserStatus!
+	token: String
+	otpHash: String
+	createdAt: String
+	updatedAt: String
+}
+
+enum UserStatus {
+	ACTIVE
+	EXPIRED
+	BLOCKED
+	SUSPENDED
+}
+
+"""
+Directs the executor to include this field or fragment only when the `if` argument is true.
+"""
+directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+"""
+Directs the executor to skip this field or fragment when the `if` argument is true.
+"""
+directive @skip(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+schema {
+	query: Query
+	mutation: Mutation
+}
