@@ -1,6 +1,6 @@
 mod categories;
 mod todos;
-mod user;
+mod users;
 
 use crate::models::categories::CategoryRepository;
 use crate::models::todos::TodoRepository;
@@ -12,14 +12,14 @@ use std::sync::Arc;
 
 #[derive(MergedObject, Default)]
 pub struct Query(
-    user::resolvers::UsersQueries,
+    users::UsersQueries,
     categories::CategoriesQueries,
     todos::TodosQueries,
 );
 
 #[derive(MergedObject, Default)]
 pub struct Mutation(
-    user::resolvers::UsersMutations,
+    users::UsersMutations,
     categories::CategoriesMutations,
     todos::TodosMutations,
 );

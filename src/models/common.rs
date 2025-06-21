@@ -15,7 +15,5 @@ pub(crate) enum Status {
 pub(crate) struct Translated {
     pub value: String,
     pub language: Option<String>,
-
-    #[serde(rename = "isPrimary")]
     pub is_primary: Option<bool>,
 }

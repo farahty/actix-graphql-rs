@@ -1,8 +1,8 @@
 use async_graphql::Enum;
+use farahty_macros::db_model;
 use serde::Deserialize;
 use serde::Serialize;
 
-use crate::db_model;
 use crate::gql_input_object;
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
@@ -25,17 +25,28 @@ pub enum UserStatus {
     Suspended,
 }
 
-db_model!(User {
-     name: Option<String>,
-     email: Option<String>,
-     password: Option<String>,
-     mobile: Option<String>,
-     token: Option<String>,
-     otp_hash: Option<String>,
-     role: Role,
-     verified: bool,
-     status: UserStatus
-});
+impl Default for UserStatus {
+    fn default() -> Self {
+        Self::Active
+    }
+}
+
+#[db_model]
+pub struct User {
+    #[serde(default)]
+    name: Option<String>,
+    email: Option<String>,
+    password: Option<String>,
+    mobile: Option<String>,
+    token: Option<String>,
+    otp_hash: Option<String>,
+    #[serde(default)]
+    role: Role,
+    #[serde(default)]
+    verified: bool,
+    #[serde(default)]
+    status: UserStatus,
+}
 
 gql_input_object!(NewUserInput {
     name: Option<String>,

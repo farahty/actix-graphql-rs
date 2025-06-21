@@ -1,5 +1,6 @@
 use crate::db::repo::MongoRepository;
-use crate::models::categories::{CategoryGQL, CategoryRepository, NewCategoryInput};
+use crate::models::categories::{CategoryRepository, NewCategoryInput};
+use crate::schema::categories::CategoryGQL;
 use async_graphql::{Context, Object};
 use std::sync::Arc;
 

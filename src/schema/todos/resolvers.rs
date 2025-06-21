@@ -1,6 +1,7 @@
 use crate::db::repo::MongoRepository;
 use crate::models::todos::NewTodoInput;
-use crate::models::todos::{TodoGQL, TodoRepository};
+use crate::models::todos::TodoRepository;
+use crate::schema::todos::TodoGQL;
 use async_graphql::{Context, Object, Result};
 use std::sync::Arc;
 

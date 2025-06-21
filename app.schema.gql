@@ -37,6 +37,11 @@ type Query {
 	todos: [TodoGQL!]!
 }
 
+enum Role {
+	USER
+	ADMIN
+}
+
 type TodoGQL {
 	id: String
 	text: String!
@@ -50,11 +55,12 @@ type UserGQL {
 	id: String
 	name: String
 	email: String
-	mobile: String
+	role: Role!
 	verified: Boolean!
 	status: UserStatus!
 	token: String
 	otpHash: String
+	phoneNumber: String
 	createdAt: String
 	updatedAt: String
 }
