@@ -37,11 +37,6 @@ type Query {
 	todos: [TodoGQL!]!
 }
 
-enum Role {
-	USER
-	ADMIN
-}
-
 type TodoGQL {
 	id: String
 	text: String!
@@ -56,7 +51,6 @@ type UserGQL {
 	name: String
 	email: String
 	mobile: String
-	role: Role!
 	verified: Boolean!
 	status: UserStatus!
 	token: String

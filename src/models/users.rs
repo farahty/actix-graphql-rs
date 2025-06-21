@@ -4,12 +4,17 @@ use serde::Serialize;
 
 use crate::db_model;
 use crate::gql_input_object;
-use crate::gql_model;
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
 pub enum Role {
     User,
     Admin,
+}
+
+impl Default for Role {
+    fn default() -> Self {
+        Self::User
+    }
 }
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
@@ -31,20 +36,6 @@ db_model!(User {
      verified: bool,
      status: UserStatus
 });
-
-gql_model!(
-    UserGQL,
-    User {
-        name: Option<String> = |value: &User| value.name.clone(),
-        email: Option<String> = |value: &User| value.email.clone(),
-        mobile: Option<String> = |value: &User| value.mobile.clone(),
-        role: Role = |value: &User| value.role,
-        verified: bool = |value: &User| value.verified,
-        status: UserStatus = |value: &User| value.status,
-        token: Option<String> = |value: &User| value.token.clone(),
-        otp_hash: Option<String> = |value: &User| value.otp_hash.clone(),
-    }
-);
 
 gql_input_object!(NewUserInput {
     name: Option<String>,
