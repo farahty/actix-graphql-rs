@@ -1,12 +1,12 @@
 use crate::db_model;
-use crate::gql_input_object;
+use crate::gql_input;
 
 db_model!(Category {
     name: String,
     description: Option<String>,
 });
 
-gql_input_object!(NewCategoryInput {
+gql_input!(NewCategoryInput {
     name: String,
     description: Option<String>,
 });

@@ -1,54 +1,51 @@
 use async_graphql::Enum;
-use farahty_macros::db_model;
 use serde::Deserialize;
 use serde::Serialize;
 
-use crate::gql_input_object;
+use crate::gql_input;
 
-#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
+#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize, Default)]
 pub enum Role {
+    #[default]
     User,
     Admin,
 }
 
-impl Default for Role {
-    fn default() -> Self {
-        Self::User
-    }
-}
-
-#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
+#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize, Default)]
 pub enum UserStatus {
+    #[default]
     Active,
     Expired,
     Blocked,
     Suspended,
 }
 
-impl Default for UserStatus {
-    fn default() -> Self {
-        Self::Active
-    }
-}
-
-#[db_model]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct User {
     #[serde(default)]
-    name: Option<String>,
-    email: Option<String>,
-    password: Option<String>,
-    mobile: Option<String>,
-    token: Option<String>,
-    otp_hash: Option<String>,
+    pub name: Option<String>,
+    pub email: Option<String>,
+    pub password: Option<String>,
+    pub mobile: Option<String>,
+    pub token: Option<String>,
+    pub otp_hash: Option<String>,
+
     #[serde(default)]
-    role: Role,
+    pub role: Role,
+
     #[serde(default)]
-    verified: bool,
+    pub verified: bool,
+
     #[serde(default)]
-    status: UserStatus,
+    pub status: UserStatus,
+
+    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
+    pub id: Option<mongodb::bson::oid::ObjectId>,
+    pub created_at: Option<mongodb::bson::DateTime>,
+    pub updated_at: Option<mongodb::bson::DateTime>,
 }
 
-gql_input_object!(NewUserInput {
+gql_input!(NewUserInput {
     name: Option<String>,
     email: Option<String>,
     password: String,

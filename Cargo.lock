@@ -23,15 +23,11 @@ dependencies = [
  "bson",
  "dotenvy",
  "env_logger",
- "farahty-macros",
  "futures",
  "log",
  "mongodb",
  "redis",
- "regex",
  "serde",
- "serde_json",
- "thiserror 1.0.69",
  "tokio",
  "tracing-subscriber",
 ]
@@ -733,17 +729,6 @@ checksum = "cea14ef9355e3beab063703aa9dab15afd25f0667c341310c1e5274bb1d0da18"
 dependencies = [
  "libc",
  "windows-sys 0.59.0",
-]
-
-[[package]]
-name = "farahty-macros"
-version = "0.1.0"
-dependencies = [
- "mongodb",
- "proc-macro2",
- "quote",
- "serde",
- "syn 2.0.104",
 ]
 
 [[package]]

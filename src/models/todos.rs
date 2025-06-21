@@ -1,15 +1,13 @@
-use farahty_macros::db_model;
+use crate::db_model;
+use crate::gql_input;
 
-use crate::gql_input_object;
-
-#[db_model]
-pub struct Todo {
+db_model!(Todo {
     text: String,
     completed: bool,
     description: Option<String>,
-}
+});
 
-gql_input_object!(NewTodoInput {
+gql_input!(NewTodoInput {
     text: String,
     completed: Option<bool>,
     description: Option<String>,

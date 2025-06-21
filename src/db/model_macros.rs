@@ -17,7 +17,7 @@ macro_rules! db_model {
 }
 
 #[macro_export]
-macro_rules! gql_input_object {
+macro_rules! gql_input {
     ($name:ident { $($field:ident : $ftype:ty),* $(,)? }) => {
         #[derive(async_graphql::InputObject, Clone)]
         pub struct $name {
