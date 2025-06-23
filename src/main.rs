@@ -1,10 +1,11 @@
 mod config;
 #[macro_use]
 pub mod db;
-pub mod error;
+mod error;
 mod handlers;
-pub mod models;
+mod models;
 mod schema;
+pub mod utils;
 
 use crate::db::{connect_db, connect_redis};
 use async_graphql_axum::GraphQL;

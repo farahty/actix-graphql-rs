@@ -1,9 +1,11 @@
-use crate::db::repo::MongoRepository;
-use crate::models::todos::NewTodoInput;
-use crate::models::todos::TodoRepository;
-use crate::schema::todos::TodoGQL;
 use async_graphql::{Context, Object, Result};
 use std::sync::Arc;
+
+use crate::{
+    db::repo::MongoRepository,
+    models::todos::{NewTodoInput, TodoRepository},
+    schema::todos::TodoGQL,
+};
 
 #[derive(Default, Clone)]
 pub struct TodosQueries;
@@ -18,7 +20,7 @@ impl TodosQueries {
 }
 
 #[derive(Default)]
-pub struct TodosMutations {}
+pub struct TodosMutations;
 
 #[Object]
 impl TodosMutations {

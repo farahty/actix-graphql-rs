@@ -7,8 +7,8 @@ type CategoryGQL {
 }
 
 type Mutation {
-	createUser(input: NewUserInput!): UserGQL
-	createCategory(input: NewCategoryInput!): CategoryGQL
+	createUser(input: NewUserInput!): UserGQL!
+	createCategory(input: NewCategoryInput!): CategoryGQL!
 	createTodo(input: NewTodoInput!): TodoGQL!
 }
 

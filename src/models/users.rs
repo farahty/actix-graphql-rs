@@ -3,6 +3,9 @@ use serde::Deserialize;
 use serde::Serialize;
 
 use crate::gql_input;
+use crate::utils::otp::CheckOTP;
+use crate::utils::password::CheckPassword;
+use crate::utils::password::HashPassword;
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize, Default)]
 pub enum Role {
@@ -45,12 +48,34 @@ pub struct User {
     pub updated_at: Option<mongodb::bson::DateTime>,
 }
 
+impl CheckOTP for User {
+    fn get_hashed_otp(&self) -> Option<&str> {
+        self.otp_hash.as_deref()
+    }
+}
+
+impl CheckPassword for User {
+    fn get_hashed_password(&self) -> Option<String> {
+        self.password.clone()
+    }
+}
+
 gql_input!(NewUserInput {
     name: Option<String>,
     email: Option<String>,
     password: String,
     mobile: Option<String>,
 });
+
+impl HashPassword for NewUserInput {
+    fn get_password(&self) -> Option<String> {
+        Some(self.password.clone())
+    }
+
+    fn set_password(&mut self, password: String) {
+        self.password = password;
+    }
+}
 
 db_repository!(
     UserRepository,

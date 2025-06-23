@@ -1,6 +1,10 @@
-use crate::db::repo::MongoRepository;
-use crate::models::categories::{CategoryRepository, NewCategoryInput};
-use crate::schema::categories::CategoryGQL;
+use crate::{
+    db::repo::MongoRepository,
+    error::Result,
+    models::categories::{CategoryRepository, NewCategoryInput},
+    schema::categories::CategoryGQL,
+};
+
 use async_graphql::{Context, Object};
 use std::sync::Arc;
 
@@ -9,14 +13,10 @@ pub struct CategoriesQueries;
 
 #[Object]
 impl CategoriesQueries {
-    pub async fn categories(&self, ctx: &Context<'_>) -> Vec<CategoryGQL> {
-        let repo = ctx
-            .data::<Arc<CategoryRepository>>()
-            .expect("CategoryRepository not in context");
-        match repo.find_all().await {
-            Ok(categories) => categories.into_iter().map(CategoryGQL::from).collect(),
-            Err(_) => vec![],
-        }
+    pub async fn categories(&self, ctx: &Context<'_>) -> Result<Vec<CategoryGQL>> {
+        let repo = ctx.data::<Arc<CategoryRepository>>()?;
+        let categories = repo.find_all().await?;
+        Ok(categories.into_iter().map(CategoryGQL::from).collect())
     }
 }
 
@@ -29,13 +29,9 @@ impl CategoriesMutations {
         &self,
         ctx: &Context<'_>,
         input: NewCategoryInput,
-    ) -> Option<CategoryGQL> {
-        let repo = ctx
-            .data::<Arc<CategoryRepository>>()
-            .expect("CategoryRepository not in context");
-        match repo.create(&input).await {
-            Ok(category) => Some(CategoryGQL::from(category)),
-            Err(_) => None,
-        }
+    ) -> Result<CategoryGQL> {
+        let repo = ctx.data::<Arc<CategoryRepository>>()?;
+
+        Ok(repo.create(&input).await?.into())
     }
 }

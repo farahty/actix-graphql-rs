@@ -1,15 +1,16 @@
 use std::sync::Arc;
 
-use async_graphql::{ComplexObject, Context};
+use async_graphql::{ComplexObject, Context, SimpleObject};
 use bson::doc;
 
 use crate::{
     db::repo::MongoRepository,
+    error::{Error, Result},
     models::{todos::Todo, users::UserRepository},
     schema::users::UserGQL,
 };
 
-#[derive(async_graphql::SimpleObject, Clone, Debug)]
+#[derive(SimpleObject, Clone, Debug)]
 #[graphql(complex)]
 pub struct TodoGQL {
     pub id: Option<String>,
@@ -35,13 +36,13 @@ impl From<Todo> for TodoGQL {
 
 #[ComplexObject]
 impl TodoGQL {
-    async fn created_by(&self, ctx: &Context<'_>) -> crate::error::Result<UserGQL> {
+    async fn created_by(&self, ctx: &Context<'_>) -> Result<UserGQL> {
         let repo = ctx.data::<Arc<UserRepository>>()?;
         let user = repo.find_one(doc! {}).await?;
 
         match user {
             Some(user) => Ok(user.into()),
-            None => Err(async_graphql::Error::new("User not found")),
+            None => Err(Error::new("User not found")),
         }
     }
 }
