@@ -4,7 +4,7 @@ use crate::models::users::{NewUserInput, UserRepository};
 use crate::schema::users::UserGQL;
 
 use async_graphql::{Context, Object};
-use std::sync::Arc;
+use mongodb::Database;
 
 #[derive(Default, Clone)]
 pub struct UsersQueries;
@@ -12,14 +12,14 @@ pub struct UsersQueries;
 #[Object]
 impl UsersQueries {
     pub async fn users(&self, ctx: &Context<'_>) -> Result<Vec<UserGQL>> {
-        let repo = ctx.data::<Arc<UserRepository>>()?;
+        let repo = UserRepository::new(ctx.data::<Database>()?);
         let users = repo.find_all().await?;
 
         Ok(users.into_iter().map(UserGQL::from).collect())
     }
 
     pub async fn user(&self, ctx: &Context<'_>, id: String) -> Result<Option<UserGQL>> {
-        let repo = ctx.data::<Arc<UserRepository>>()?;
+        let repo = UserRepository::new(ctx.data::<Database>()?);
         let user = repo.find_by_id(&id).await?;
 
         Ok(user.map(UserGQL::from))
@@ -32,7 +32,7 @@ pub struct UsersMutations;
 #[Object]
 impl UsersMutations {
     pub async fn create_user(&self, ctx: &Context<'_>, input: NewUserInput) -> Result<UserGQL> {
-        let repo = ctx.data::<Arc<UserRepository>>()?;
+        let repo = UserRepository::new(ctx.data::<Database>()?);
 
         Ok(repo.create(&input).await?.into())
     }

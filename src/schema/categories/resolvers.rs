@@ -6,7 +6,7 @@ use crate::{
 };
 
 use async_graphql::{Context, Object};
-use std::sync::Arc;
+use mongodb::Database;
 
 #[derive(Default, Clone)]
 pub struct CategoriesQueries;
@@ -14,7 +14,7 @@ pub struct CategoriesQueries;
 #[Object]
 impl CategoriesQueries {
     pub async fn categories(&self, ctx: &Context<'_>) -> Result<Vec<CategoryGQL>> {
-        let repo = ctx.data::<Arc<CategoryRepository>>()?;
+        let repo = CategoryRepository::new(ctx.data::<Database>()?);
         let categories = repo.find_all().await?;
         Ok(categories.into_iter().map(CategoryGQL::from).collect())
     }
@@ -30,7 +30,7 @@ impl CategoriesMutations {
         ctx: &Context<'_>,
         input: NewCategoryInput,
     ) -> Result<CategoryGQL> {
-        let repo = ctx.data::<Arc<CategoryRepository>>()?;
+        let repo = CategoryRepository::new(ctx.data::<Database>()?);
 
         Ok(repo.create(&input).await?.into())
     }

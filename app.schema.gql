@@ -35,6 +35,7 @@ type Query {
 	user(id: String!): UserGQL
 	categories: [CategoryGQL!]!
 	todos: [TodoGQL!]!
+	ping: String!
 }
 
 enum Role {

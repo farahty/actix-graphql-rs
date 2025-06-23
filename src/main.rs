@@ -11,9 +11,9 @@ use crate::db::{connect_db, connect_redis};
 use async_graphql_axum::GraphQL;
 use axum::{Router, routing::get};
 use config::AppConfig;
+use std::error::Error;
 use std::fs::File;
 use std::io::Write;
-use std::{error::Error, sync::Arc};
 use tracing_subscriber;
 
 #[tokio::main]
@@ -25,11 +25,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let config = AppConfig::from_env();
 
     // Connect to Redis and MongoDB
-    let redis = Arc::new(connect_redis(&config).await);
+    let redis = connect_redis(&config).await;
     let db = connect_db(&config).await;
 
     // Build the GraphQL schema and write SDL to a file for tooling
-    let schema = schema::build_schema(redis, &db);
+    let schema = schema::build_schema(redis, db);
     File::create("app.schema.gql")?.write_all(&schema.sdl().as_bytes())?;
 
     // Set up the Axum router with GraphQL and UI endpoints
