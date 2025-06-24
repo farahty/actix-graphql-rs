@@ -1,11 +1,13 @@
 use crate::{
     db::repo::MongoRepository,
-    error::Result,
+    error::{Error, Result},
     models::users::{NewUserInput, UserRepository},
     schema::users::UserGQL,
+    utils::password::{CheckPassword, HashPassword},
 };
 
-use async_graphql::{Context, Object};
+use async_graphql::{Context, Object, OneofObject};
+use bson::doc;
 use mongodb::Database;
 
 #[derive(Default, Clone)]
@@ -31,11 +33,38 @@ impl UsersQueries {
 #[derive(Default, Clone)]
 pub struct UsersMutations;
 
+#[derive(OneofObject)]
+pub enum Identity {
+    Email(String),
+    Mobile(String),
+}
+
 #[Object]
 impl UsersMutations {
-    pub async fn create_user(&self, ctx: &Context<'_>, input: NewUserInput) -> Result<UserGQL> {
+    pub async fn create_user(&self, ctx: &Context<'_>, mut input: NewUserInput) -> Result<UserGQL> {
         let repo = UserRepository::new(ctx.data::<Database>()?);
-
+        input.hash_password()?;
         Ok(repo.create(&input).await?.into())
+    }
+
+    pub async fn login(
+        &self,
+        ctx: &Context<'_>,
+        identity: Identity,
+        password: String,
+    ) -> Result<Option<UserGQL>> {
+        let repo = UserRepository::new(ctx.data::<Database>()?);
+        let user = match identity {
+            Identity::Email(email) => repo.find_one(doc! { "email": email }).await?,
+            Identity::Mobile(mobile) => repo.find_one(doc! { "mobile": mobile }).await?,
+        };
+
+        match user {
+            Some(user) => match user.check_password(password) {
+                Ok(_) => Ok(Some(UserGQL::from(user))),
+                Err(er) => Err(Error::new(format!("Invalid credentials ({}).", er.message))),
+            },
+            None => Err(Error::new("User not found")),
+        }
     }
 }
