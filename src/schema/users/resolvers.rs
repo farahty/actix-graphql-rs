@@ -1,7 +1,9 @@
-use crate::db::repo::MongoRepository;
-use crate::error::Result;
-use crate::models::users::{NewUserInput, UserRepository};
-use crate::schema::users::UserGQL;
+use crate::{
+    db::repo::MongoRepository,
+    error::Result,
+    models::users::{NewUserInput, UserRepository},
+    schema::users::UserGQL,
+};
 
 use async_graphql::{Context, Object};
 use mongodb::Database;

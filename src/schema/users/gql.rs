@@ -1,5 +1,4 @@
-use crate::models::users::User;
-use crate::models::users::{Role, UserStatus};
+use crate::models::users::{Role, User, UserStatus};
 
 // Define UserGQL with field exclusions and renames
 // This approach is limited but doesn't require procedural macros
